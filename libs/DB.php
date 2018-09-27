@@ -35,6 +35,11 @@
             return $this->pdo->exec($sql);
         }
 
+        function redirect($url)
+        {
+            header('Location:'.$url);
+            exit;
+        }
 
     }
 ?>

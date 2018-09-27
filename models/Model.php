@@ -1,5 +1,6 @@
 <?php
 namespace models;
+use PDO;
     // 所有模型的父模型  
     // 在这实现所有的：增删改查 翻页 等功能
 class Model{
@@ -58,7 +59,7 @@ class Model{
     // 删除
     public function delete($id){
         $this->before_delete();
-        $stmt->$this->db->prepare('DELETE FROM {$this->table} WHERE id=?');
+        $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE id=?");
         $stmt->execute([$id]);
         $this->after_delete();
     }
@@ -71,11 +72,13 @@ class Model{
         foreach($this->data as $k => $v){
             $set[]="$k=?";
             $token='?';
-            $values=$v;
+            $values[]=$v;
         }
         $set = implode(',',$set);
         $values[]=$id;
+        // var_dump($values);
         $sql = "UPDATE {$this->table} SET $set WHERE id=?";
+        // var_dump($sql);
         $stmt = $this->db->prepare($sql);
         $stmt->execute($values);
         $this->after_write();
@@ -114,7 +117,7 @@ class Model{
         // 获取总的记录数
          $stmt = $this->db->prepare("SELECT COUNT(*) FROM {$this->table} WHERE {$option_arr['where']}");
          $stmt->execute();
-         $count = $stmt->fetch(PDO::FETCH_ASSOC);
+         $count = $stmt->fetch(PDO::FETCH_COLUMN);
          $pageCount = ceil($count/$option_arr['per_page']);
 
          $page_str = '';
@@ -133,6 +136,7 @@ class Model{
 
     // 取一条记录
     public function findone($id){
+
         $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id=?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);

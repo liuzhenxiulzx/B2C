@@ -16,19 +16,21 @@
             $stmt -> execute();
             // 取出数据
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);  
-            // echo "<pre>";
-            // var_dump($data);
-            // exit;
+       
+              //收集所有字段的白名单
+              $fillable = [];
+              foreach($data as $v){
+                  if($v['Field'] == 'id' || $v['Field'] == 'created_at'){
+                       continue;
+                  }
+                 
+                  $fillable[] = $v['Field'];
+               
+              }
+             
+            $fillable = implode("','", $fillable);
 
-            //收集所有字段的白名单
-            $fillable = [];
-            foreach($data as $v){
-                if($v['Field'] == 'id' || $v['Field'] == 'created_at')
-                continue;
-                $fillable = $v['Field'];
-            }
-            $fillable = implode("','",$fillable);
-
+            $mname = ucfirst($tableName);
             // 2.生成控制器
             // 拼出控制器的名字
             $cname = ucfirst($tableName).'Controller';
@@ -39,7 +41,8 @@
             file_put_contents(ROOT.'controllers/'.$cname.'.php',"<?php\r\n".$str);
 
             // 3.生成模型
-            $mname = ucfirst($tableName);
+            
+
             ob_start();
             include(ROOT.'templates/model.php');
             $str = ob_get_clean();
@@ -47,9 +50,8 @@
 
             // 4.生成视图文件
             @mkdir(ROOT.'views/'.$tableName,0777);
-
-            
-            
+          
+        
             // create.html
             ob_start();
             include(ROOT.'templates/create.html');

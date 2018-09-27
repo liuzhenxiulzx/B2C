@@ -1,6 +1,7 @@
 <?php
     define("ROOT",dirname(__FILE__).'/../');
-
+    // 引入函数文件
+    require(ROOT.'libs/function.php');
     //类的自动加载
     function autoload($class){
         $path = str_replace('\\','/',$class);
