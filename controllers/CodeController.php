@@ -27,6 +27,7 @@
                 continue;
                 $fillable = $v['Field'];
             }
+            $fillable = implode("','",$fillable);
 
             // 2.生成控制器
             // 拼出控制器的名字
