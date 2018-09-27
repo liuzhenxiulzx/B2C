@@ -8,6 +8,13 @@ class Model{
     protected $table;
     // 表单中的数据，值由子类设置
     protected $data;
+     /**
+     * 钩子函数
+     */
+    protected function before_write(){} //写入前
+    protected function after_write(){}  //写入后
+    protected function before_delete(){} //删除前
+    protected function after_delete(){}  //删除后
 
     public function __construct(){
 
@@ -34,7 +41,7 @@ class Model{
         $values = [];
         $token = [];
 
-        foreach($data as $k=>$v){
+        foreach($this->data as $k=>$v){
             $keys[]= $k;
             $values[]=$v;
             $token[]='?';
@@ -48,20 +55,87 @@ class Model{
         return $stmt->execute($values);
     }
 
-    public function delete(){
-        
+    // 删除
+    public function delete($id){
+        $this->before_delete();
+        $stmt->$this->db->prepare('DELETE FROM {$this->table} WHERE id=?');
+        $stmt->execute([$id]);
+        $this->after_delete();
     }
 
-    public function update(){
-        
+    // 修改
+    public function update($id){
+        $this->before_write();
+        $set=[];
+        $token=[];
+        foreach($this->data as $k => $v){
+            $set[]="$k=?";
+            $token='?';
+            $values=$v;
+        }
+        $set = implode(',',$set);
+        $values[]=$id;
+        $sql = "UPDATE {$this->table} SET $set WHERE id=?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($values);
+        $this->after_write();
     }
 
-    public function findAll(){
-        
+    // 翻页
+    public function findAll($options=[]){
+        $option_arr = [
+            'fields'=>'*',
+            'where'=>1,
+            'order_by'=>'id',
+            'order_way'=>'desc',
+            'per_page'=>20,
+        ];
+
+        // 合并用户的配置
+        if($options){
+            $option_arr = array_merge($option_arr,$options);
+        }
+
+        // 翻页
+
+        $page = isset($_GET['page']) ? max(1,(int)$_GET['page']) : 1;
+        $offset = ($page-1)*$option_arr['per_page'];
+
+        $sql = "SELECT {$option_arr['fields']}
+                FROM {$this->table}
+                WHERE {$option_arr['where']}
+                ORDER BY {$option_arr['order_by']} {$option_arr['order_way']} 
+                LIMIT $offset,{$option_arr['per_page']}
+                ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // 获取总的记录数
+         $stmt = $this->db->prepare("SELECT COUNT(*) FROM {$this->table} WHERE {$option_arr['where']}");
+         $stmt->execute();
+         $count = $stmt->fetch(PDO::FETCH_ASSOC);
+         $pageCount = ceil($count/$option_arr['per_page']);
+
+         $page_str = '';
+         if($pageCount > 1){
+             for($i=1;$i<=$pageCount;$i++){
+                $page_str .= '<a href="?page='.$i.'">'.$i.'</a>';
+              }
+         }
+
+         return [
+             'data'=>$data,
+             'page'=>$page_str,
+         ];
+
     }
 
-    public function findone(){
-        
+    // 取一条记录
+    public function findone($id){
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id=?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     // 接收表单数据

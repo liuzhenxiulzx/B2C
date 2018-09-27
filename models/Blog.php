@@ -1,6 +1,6 @@
 <?php
     namespace models;
-
+    
     class Blog extends Model{
         // 设置这个模型对应的表
         protected $table = 'blog';

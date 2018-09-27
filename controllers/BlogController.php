@@ -32,7 +32,9 @@ class BlogController{
     // 修改表单的方法
     public function update()
     {
-
+        $blog = new \models\Blog;
+        $blog->fill($_POST);
+        $blog->update($_GET['id']);
     }
 
     // 删除

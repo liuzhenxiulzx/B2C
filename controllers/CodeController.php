@@ -7,6 +7,27 @@
             //1.接收参数
             $tableName = $_GET['name'];
 
+            // 取出这个表中所有的字段信息
+            $sql = "SHOW FULL FIELDS FROM $tableName";
+            $db = \libs\DB::getDB();
+            //预处理
+            $stmt = $db->prepare($sql);
+            // 执行SQL
+            $stmt -> execute();
+            // 取出数据
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);  
+            // echo "<pre>";
+            // var_dump($data);
+            // exit;
+
+            //收集所有字段的白名单
+            $fillable = [];
+            foreach($data as $v){
+                if($v['Field'] == 'id' || $v['Field'] == 'created_at')
+                continue;
+                $fillable = $v['Field'];
+            }
+
             // 2.生成控制器
             // 拼出控制器的名字
             $cname = ucfirst($tableName).'Controller';
@@ -26,18 +47,7 @@
             // 4.生成视图文件
             @mkdir(ROOT.'views/'.$tableName,0777);
 
-            // 取出这个表中所有的字段信息
-            $sql = "SHOW FULL FIELDS FROM $tableName";
-            $db = \libs\DB::getDB();
-            //预处理
-            $stmt = $db->prepare($sql);
-            // 执行SQL
-            $stmt -> execute();
-            // 取出数据
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);  
-            // echo "<pre>";
-            // var_dump($data);
-            // exit;
+            
             
             // create.html
             ob_start();
