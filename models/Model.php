@@ -36,7 +36,7 @@ class Model{
 
         // $sql = "INSERT INTO {$this->table}($keys) VALUES('$values')";
         // $this->db->exec($sql);
-
+        $this->before_write();
 
         $keys = [];
         $values = [];
@@ -53,7 +53,10 @@ class Model{
 
         $sql = "INSERT INTO {$this->table}($keys) VALUES($token)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute($values);
+        $stmt->execute($values);
+        $this->data['id'] = $this->db->lastInsertId();
+        
+        $this->after_write();
     }
 
     // 删除
@@ -61,6 +64,7 @@ class Model{
         $this->before_delete();
         $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE id=?");
         $stmt->execute([$id]);
+        
         $this->after_delete();
     }
 
@@ -92,6 +96,8 @@ class Model{
             'order_by'=>'id',
             'order_way'=>'desc',
             'per_page'=>20,
+            'join'=>'',
+            'groupby'=>'',
         ];
 
         // 合并用户的配置
@@ -106,7 +112,9 @@ class Model{
 
         $sql = "SELECT {$option_arr['fields']}
                 FROM {$this->table}
+                {$option_arr['join']}
                 WHERE {$option_arr['where']}
+                {$option_arr['groupby']}
                 ORDER BY {$option_arr['order_by']} {$option_arr['order_way']} 
                 LIMIT $offset,{$option_arr['per_page']}
                 ";
@@ -153,4 +161,32 @@ class Model{
         }
         $this->data = $data;
     }
+
+
+    // 递归排序
+    // 参数一：排序的数据
+    // 参数二：上级ID
+    // 参数三：第几级
+    public function _tree($data,$parent_id=0,$level=0){
+
+        // 定义一个数组保存排好序的数据
+        static $_ret = [];
+
+        foreach($data as $v){
+            if($v['parent_id'] == $parent_id){
+                // 标记它的级别
+                $v['level'] = $level;
+                // 挪到排序之后的数组中
+                $_ret[] = $v;
+                // 找$v的子分类
+                $this->_tree($data,$v['id'],$level+1);
+            }
+        }
+        // 返回排序好的数组
+        return $_ret;
+
+    }
+
+
+    
 }

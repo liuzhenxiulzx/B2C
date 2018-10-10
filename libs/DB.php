@@ -41,5 +41,10 @@
             exit;
         }
 
+        public function lastInsertId()
+        {
+            return $this->pdo->lastInsertId();
+        }
+
     }
 ?>

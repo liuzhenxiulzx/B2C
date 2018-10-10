@@ -80,3 +80,50 @@ create table goods_sku
     price decimal(10,2) not null comment '价格',
     primary key (id)
 )engine=InnoDB comment='商品SKU表';
+
+-- RBAC
+
+drop table if exists privilege;
+create table privilege
+(
+    id int unsigned not null auto_increment comment 'ID',
+    pri_name varchar(255) not null comment '权限名称',
+    url_path varchar(255) not null comment '对应的URL地址，多个地址用,隔开',
+    parent_id int unsigned not null default '0' comment '上级权限的ID',
+    primary key (id)
+)engine=InnoDB comment='权限表';
+
+drop table if exists role_privilege;
+create table role_privilege
+(
+    pri_id int unsigned not null comment '权限ID',
+    role_id int unsigned not null comment '角色ID',
+    key pri_id(pri_id),
+    key role_id(role_id)
+)engine=InnoDB comment='角色权限表';
+
+drop table if exists role;
+create table role
+(
+    id int unsigned not null auto_increment comment 'ID',
+    role_name varchar(255) not null comment '角色名称',
+    primary key (id)
+)engine=InnoDB comment='角色表';
+
+drop table if exists admin_role;
+create table admin_role
+(
+    role_id int unsigned not null comment '角色ID',
+    admin_id int unsigned not null comment '管理员ID',
+    key role_id(role_id),
+    key admin_id(admin_id)
+)engine=InnoDB comment='管理员表';
+
+drop table if exists admin;
+create table admin
+(
+    id int unsigned not null auto_increment comment 'ID',
+    username varchar(255) not null comment '用户名',
+    password varchar(255) not null comment '密码',
+    primary key (id)
+)engine=InnoDB comment='管理员表';
