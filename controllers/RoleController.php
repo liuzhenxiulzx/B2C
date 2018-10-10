@@ -46,8 +46,19 @@ class RoleController{
     {
         $model = new Role;
         $data=$model->findOne($_GET['id']);
+
+        // 取出权限的数据
+        $priModel = new \models\Privilege;
+        //获取树形数据
+        $priData = $priModel->tree();
+
+        // 取出这个角色所拥有的权限id
+        $priIds = $model->getPriIds($_GET['id']);
+
         view('role/edit', [
-            'data' => $data,    
+            'data' => $data,   
+            'priData'=>$priData,
+            'priIds'=>$priIds, 
         ]);
     }
 
