@@ -155,4 +155,25 @@ class Goods extends Model
     {
         $this->delete_logo();
     } 
+
+    public function arrdata($data){
+         // 把二维数组转成一维数组
+        $_ret = [];
+        foreach($data as $v){
+                // 判断是否有多个url
+                if(FALSE === strpos($v['url_path'],',')){
+                    // 如果没有，就直接拿过来
+                    $_ret[] = $v['url_path'];
+                }else{
+                    // 如果有，就转成数组
+                    $arr = explode(',',$v['url_path']);
+                    // 把转完之后的数组合并到一维数组中
+                    $_ret = array_merge($_ret,$arr);
+                }
+            
+        }
+        return $_ret;
+    }
+
+     
 }

@@ -46,16 +46,28 @@ class GoodsController  extends BaseController{
     // 显示修改的表单
     public function edit()
     {
-        $model = new Goods;
-        // $data=$model->findOne($_GET['id']);
+        $model = new Goods;        
+        // 获取商品的信息
+        $goodsdata=$model->findOne($_GET['id']);
+
         $data=$model->getFullInfo($_GET['id']);
+
+        $image = $data['images'][0];
+        $skus = $data['skus'][0];
+        $attr = $data['attrs'][0];
 
         // 取出一级分类
         $catemodel = new \models\Category;
-        $topCat = $catemodel->getCat();
+        $topCat = $catemodel->getcate();
+       
+
 
         view('goods/edit', [
-            'data' => $data,   
+            'goodsdata'=>$goodsdata,
+            'image'=>$image,
+            'skus'=>$skus,
+            'attr'=>$attr,
+            // 'data' => $data,   
             'topCat'=>$topCat['data'], 
         ]);
     }
@@ -63,6 +75,7 @@ class GoodsController  extends BaseController{
     // 修改表单的方法
     public function update()
     {
+    //   echo  $_GET['id'];
         $model = new Goods;
         $model->fill($_POST);
         $model->update($_GET['id']);
