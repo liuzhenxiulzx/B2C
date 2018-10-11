@@ -1,5 +1,15 @@
 <?php
+
+    // 动态的修改 php.ini 配置文件
+    ini_set('session.save_handler', 'redis');   // 使用 redis 保存 SESSION
+    ini_set('session.save_path', 'tcp://127.0.0.1:6379?database=1');  // 设置 redis 服务器的地址、端口、使用的数据库
+
+    session_start();
+
     define("ROOT",dirname(__FILE__).'/../');
+    // 设置时区
+    date_default_timezone_set('PRC');
+
     // 引入函数文件
     require(ROOT.'libs/function.php');
     //类的自动加载

@@ -1,7 +1,7 @@
 <?php
     namespace controllers;
     use PDO;
-    class CodeController{
+    class CodeController  extends BaseController{
         // 生成代码
         public function make(){
             //1.接收参数
