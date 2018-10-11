@@ -26,10 +26,8 @@ class GoodsController  extends BaseController{
     {
         // 取出一级分类
         $model = new \models\Category;
-        $topCate = $model->getcate(0);
-        // echo "<pre>";
-        // var_dump($topCate['data']);
-        // exit;
+        $topCate = $model->getcate();
+       
         
         view('goods/create',[
             'tocate'=>$topCate['data']
@@ -49,9 +47,16 @@ class GoodsController  extends BaseController{
     public function edit()
     {
         $model = new Goods;
-        $data=$model->findOne($_GET['id']);
+        // $data=$model->findOne($_GET['id']);
+        $data=$model->getFullInfo($_GET['id']);
+
+        // 取出一级分类
+        $catemodel = new \models\Category;
+        $topCat = $catemodel->getCat();
+
         view('goods/edit', [
-            'data' => $data,    
+            'data' => $data,   
+            'topCat'=>$topCat['data'], 
         ]);
     }
 
