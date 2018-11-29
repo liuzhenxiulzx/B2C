@@ -21,13 +21,17 @@ class Goods extends Model
 
     // 添加、修改之前执行
     public function before_write(){
+        echo "<pre>";
+        var_dump($_FILES);
+       
         // 如果删除了logo，就删除原来的logo再上传新的logo
-        if($_FILES['logo']['error']==0){
+        if($_FILES['logo']['error'] == 0 ){
             // 删除原来的logo
             $this->delete_logo();
             // 实现上传图片的代码
             $uploader =  \libs\Uploade::getuploads();
             $logo = '/uploads/'.$uploader->uploade('logo','goods');
+            
             // $this->data ：将要插入到数据库中的数据（数组）
             // 把logo加到数组中，就可以插入到数据库
             $this->data['logo'] = $logo;
@@ -40,7 +44,7 @@ class Goods extends Model
     public function after_write(){
         // 获取商品的ID
         $goodsId = isset($_GET['id']) ? $_GET['id'] : $this->data['id'];
-
+        echo $goodsId;
         // 处理商品属性
 
         // 先删除原来的属性

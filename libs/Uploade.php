@@ -28,6 +28,7 @@
         //定义公开方法
         // 上传图片
         public function uploade($name,$sudir){
+            
             // 把用户图片的信息保存到属性中
             $this->file = $_FILES[$name];
             $this->subDir = $sudir;
@@ -81,3 +82,4 @@
 
     }
 ?>
+

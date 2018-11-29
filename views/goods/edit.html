@@ -15,7 +15,7 @@
         <div style="clear:both"></div>
     </h1>
     <div class="main-div">
-        <form action="/goods/update?id=<?=$data['id']?>" method="post" enctype="multipart/form-data">
+        <form action="/goods/update?id=<?=$data['info']['id']?>" method="post" enctype="multipart/form-data">
             
             <table width="100%" id="general-table">
                 <tr>
@@ -31,7 +31,7 @@
                         <div class="img_preview">
                             <img src="<?=$goodsdata['logo']?>" width="120" height="120" alt="">
                         </div>
-                        <!-- <input type='text' size="80" name='logo'> -->
+                        <input class="preview" type='file' size="80" name='logo'>
                         <font color="red">*</font>
                     </td>
                 </tr>
@@ -108,7 +108,7 @@
                         <tr>
                             <td class="label">属性值:</td>
                             <td>
-                                <input type='text' size="80" value="<?=$attr['attr_value']?>">
+                                <input type='text' size="80" value="<?=$attr['attr_value']?>" name='attr_value[]'>
                                 <font color="red">*</font>
                             </td>
                         </tr>

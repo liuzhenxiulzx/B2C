@@ -24,7 +24,7 @@ class BrandController  extends BaseController{
         $model = new Brand;
         $model->fill($_POST);
         $model->insert();
-        redirect('/brand/index');
+      
     }
 
     // 显示修改的表单
