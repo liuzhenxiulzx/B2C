@@ -21,8 +21,8 @@ class Goods extends Model
 
     // 添加、修改之前执行
     public function before_write(){
-        echo "<pre>";
-        var_dump($_FILES);
+        // echo "<pre>";
+        // var_dump($_FILES);
        
         // 如果删除了logo，就删除原来的logo再上传新的logo
         if($_FILES['logo']['error'] == 0 ){

@@ -12,6 +12,9 @@
 
     // 引入函数文件
     require(ROOT.'libs/function.php');
+    // 引入composer包
+    require(ROOT.'vendor/autoload.php');
+    
     //类的自动加载
     function autoload($class){
         $path = str_replace('\\','/',$class);
